@@ -33,7 +33,7 @@ module.exports = {
           ? res.status(404).json({ message: "No user with that ID" })
           : res.json({
               user,
-              //?   grade: await grade(req.params.userId), Dp O need something else here?
+              //TODO  populate thought and friend data
             });
       })
       .catch((err) => {
@@ -71,10 +71,10 @@ module.exports = {
         res.status(500).json(err);
       });
   },
-
-  // Add an thought to a user
-  addThought(req, res) {
-    console.log("You are adding an thought");
+  //TODO add thought and remove thought are wrong
+  // Add an friend to a user
+  addFriend(req, res) {
+    console.log("You are adding a friend");
     console.log(req.body);
     User.findOneAndUpdate(
       { _id: req.params.userId },
@@ -89,10 +89,10 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   // Remove thought from a user
-  removeThought(req, res) {
+  removeFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $pull: { thought: { thoughtId: req.params.thoughtId } } },
+      { $pull: { friend: { userId: req.params.userId } } }, //! does this need to be friendId? I don't think so
       { runValidators: true, new: true }
     )
       .then((user) =>
