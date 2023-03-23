@@ -1,4 +1,3 @@
-const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
 //aggregate function to get total number of friends of a users
@@ -7,7 +6,7 @@ const friendCount = async () =>
     .count("friendCount")
     .then((numberOfFriends) => numberOfFriends);
 
-  //?Where do I put reactionCount aggregate function?
+//?Where do I put reactionCount aggregate function?
 
 module.exports = {
   //!       get all users, and utilize aggregate function friendCount

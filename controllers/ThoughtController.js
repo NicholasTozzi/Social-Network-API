@@ -1,23 +1,23 @@
 const { User, Thought } = require("../models");
 
 module.exports = {
-//!       Get all thoughts
+  //!       Get all thoughts
   getThoughts(req, res) {
     Thought.find()
       .then((thoughts) => res.json(thoughts))
       .catch((err) => res.status(500).json(err));
   },
 
-//!       create new thought
+  //!       create new thought
   createThought(req, res) {
     Thought.create(req.body)
-      .then((course) => res.json(course))
+      .then((thought) => res.json(thought))
       .catch((err) => {
         console.log(err);
         return res.status(500).json(err);
       });
   },
-//!       Get single Thought by using required parameter thoughtId
+  //!       Get single Thought by using required parameter thoughtId
   getSingleThought(req, res) {
     Thought.findOne({ id: req.params.thoughtId })
       .select("-__v")
@@ -32,7 +32,7 @@ module.exports = {
         return res.status(500).json(err);
       });
   },
-//!       Delete a thought
+  //!       Delete a thought
   deleteThought(req, res) {
     Thought.findOneAndDelete({ _id: required.params.thoughtId })
       .then((thought) =>
@@ -46,7 +46,7 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
 
-//!       Update a thought
+  //!       Update a thought
   updateThought(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
