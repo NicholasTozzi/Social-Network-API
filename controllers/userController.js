@@ -1,15 +1,14 @@
 const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
-//aggregate function to get total number of users
-    const friendCount = async () =>
+//aggregate function to get total number of friends of a users
+const friendCount = async () =>
   User.aggregate()
     .count("friendCount")
     .then((numberOfFriends) => numberOfFriends);
 
-
-
 module.exports = {
+  //!       get all users, and utilize aggregate function friendCount
   getUsers(req, res) {
     User.find()
       .then(async (users) => {
@@ -24,7 +23,7 @@ module.exports = {
         return res.status(500).json(err);
       });
   },
-
+  //!       get single user based off required parameter UserId
   getSingleUser(req, res) {
     User.findOne({ id: req.params.userId })
       .select("-__v")
@@ -33,7 +32,7 @@ module.exports = {
       .then(async (user) => {
         !user
           ? res.status(404).json({ message: "No user with that ID" })
-          : res.json({user});
+          : res.json({ user });
       })
       .catch((err) => {
         console.log(err);
@@ -41,12 +40,26 @@ module.exports = {
       });
   },
 
+  //!       create new User
   createUser(req, res) {
     User.create(req.body)
       .then((user) => res.json(user))
       .catch((err) => res.status(500).json(err));
   },
-
+  //!       update User with a required parameter of the userId
+  updateUser(req, res) {
+    User.findOneAndUpdate({ id: req.params.userId }, req.body, {
+      new: true,
+      runValidators: true,
+    })
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: "No user found with that ID 😱" })
+          : res.json(user)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
+  //!       Delete user with a required parameter of the userId
   deleteUser(req, res) {
     User.findOneAndRemove({ _id: req.params.userId })
       .then((user) =>
@@ -71,7 +84,7 @@ module.exports = {
       });
   },
 
-  // Add an friend to a user
+  //!       Add an friend to a user
   addFriend(req, res) {
     console.log("You are adding a friend");
     console.log(req.body);
@@ -87,7 +100,7 @@ module.exports = {
       )
       .catch((err) => res.status(500).json(err));
   },
-  // Remove thought from a user
+  //!       Remove thought from a user
   removeFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
