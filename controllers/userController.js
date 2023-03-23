@@ -7,6 +7,8 @@ const friendCount = async () =>
     .count("friendCount")
     .then((numberOfFriends) => numberOfFriends);
 
+  //?Where do I put reactionCount aggregate function?
+
 module.exports = {
   //!       get all users, and utilize aggregate function friendCount
   getUsers(req, res) {
@@ -48,10 +50,11 @@ module.exports = {
   },
   //!       update User with a required parameter of the userId
   updateUser(req, res) {
-    User.findOneAndUpdate({ id: req.params.userId }, req.body, {
-      new: true,
-      runValidators: true,
-    })
+    User.findOneAndUpdate(
+      { id: req.params.userId },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    )
       .then((user) =>
         !user
           ? res.status(404).json({ message: "No user found with that ID 😱" })
