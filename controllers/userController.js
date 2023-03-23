@@ -2,12 +2,12 @@ const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
 //aggregate function to get total number of users
-const userCount = async () =>
+    const friendCount = async () =>
   User.aggregate()
-    .count("userCount")
-    .then((numberofUsers) => numberOfUsers);
+    .count("friendCount")
+    .then((numberOfFriends) => numberOfFriends);
 
-//do I need any other aggregate functions?
+
 
 module.exports = {
   getUsers(req, res) {
@@ -15,7 +15,7 @@ module.exports = {
       .then(async (users) => {
         const userObj = {
           users,
-          headCount: await headCount(),
+          friendCount: await friendCount(),
         };
         return res.json(userObj);
       })
@@ -28,13 +28,12 @@ module.exports = {
   getSingleUser(req, res) {
     User.findOne({ id: req.params.userId })
       .select("-__v")
+      .populate("friends")
+      .populate("thoughts")
       .then(async (user) => {
         !user
           ? res.status(404).json({ message: "No user with that ID" })
-          : res.json({
-              user,
-              //TODO  populate thought and friend data
-            });
+          : res.json({user});
       })
       .catch((err) => {
         console.log(err);
@@ -71,7 +70,7 @@ module.exports = {
         res.status(500).json(err);
       });
   },
-  //TODO add thought and remove thought are wrong
+
   // Add an friend to a user
   addFriend(req, res) {
     console.log("You are adding a friend");
@@ -92,7 +91,7 @@ module.exports = {
   removeFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $pull: { friend: { userId: req.params.userId } } }, //! does this need to be friendId? I don't think so
+      { $pull: { friends: { friendId: req.params.friendId } } },
       { runValidators: true, new: true }
     )
       .then((user) =>
