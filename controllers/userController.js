@@ -12,6 +12,7 @@ module.exports = {
   //!       get all users, and utilize aggregate function friendCount
   getUsers(req, res) {
     User.find()
+      .populate('thoughts')
       .then(async (users) => {
         const userObj = {
           users,

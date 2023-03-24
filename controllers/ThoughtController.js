@@ -10,19 +10,26 @@ module.exports = {
 
   //!       create new thought
   createThought(req, res) {
-    Thought.create(req.body)
-      .then((thought) => res.json(thought))
+    console.log(req.body);
+    Thought.create({ ...req.body, userId: req.params.userId }) // add userId to the thought object
+      .then((thought) => {
+        console.log(thought);
+        console.log(thought._id);
+        User.findOneAndUpdate(
+          { _id: req.params.userId },
+          { $addToSet: { thoughts: thought._id } },
+          { runValidators: true, new: true }
+        )
+          .then(() => res.json(thought))
+          .catch((err) => {
+            console.log(err);
+            return res.status(500).json(err);
+          });
+      })
       .catch((err) => {
         console.log(err);
         return res.status(500).json(err);
       });
-    // .then(
-    //   Thought.findOneAndUpdate(
-    //     { _id: req.params.userId },
-    //     { $addToSet: { thoughts: req.params.thoughtId } },
-    //     { runValidators: true, new: true }
-    //   )
-    // );
   },
   //!       Get single Thought by using required parameter thoughtId
   getSingleThought(req, res) {
