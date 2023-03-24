@@ -16,6 +16,13 @@ module.exports = {
         console.log(err);
         return res.status(500).json(err);
       });
+    // .then(
+    //   Thought.findOneAndUpdate(
+    //     { _id: req.params.userId },
+    //     { $addToSet: { thoughts: req.params.thoughtId } },
+    //     { runValidators: true, new: true }
+    //   )
+    // );
   },
   //!       Get single Thought by using required parameter thoughtId
   getSingleThought(req, res) {
