@@ -10,7 +10,7 @@ module.exports = {
 
   //!       create new thought
   createThought(req, res) {
-    Thought.create(req.body) 
+    Thought.create(req.body)
       .then((thought) => {
         User.findOneAndUpdate(
           { username: req.body.username },
@@ -83,7 +83,7 @@ module.exports = {
   // Create a reaction
 
   createReaction(req, res) {
-    Reaction.create(req.body) 
+    Reaction.create(req.body)
       .then((reaction) => {
         Thought.findOneAndUpdate(
           { _id: req.params.thoughtId },
@@ -113,7 +113,7 @@ module.exports = {
   removeReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $pull: { reactions: req.params.reactionId } } 
+      { $pull: { reactions: req.params.reactionId } }
     )
       .then((reaction) =>
         !reaction
@@ -127,7 +127,7 @@ module.exports = {
   // TODO Update Reaction
   updateReaction(req, res) {
     Reaction.findOneAndUpdate(
-      { _id: req.params.thoughtId },
+      { _id: req.params.reactionId },
       { $set: req.body },
       { new: true, runValidators: true }
     )
