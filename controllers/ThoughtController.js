@@ -10,7 +10,7 @@ module.exports = {
 
   //!       create new thought
   createThought(req, res) {
-    Thought.create(req.body) // add userId to the thought object
+    Thought.create(req.body) 
       .then((thought) => {
         User.findOneAndUpdate(
           { username: req.body.username },
@@ -36,11 +36,11 @@ module.exports = {
   },
   //!       Get single Thought by using required parameter thoughtId
   getSingleThought(req, res) {
-    Thought.findOne({ id: req.params.thoughtId })
+    Thought.findOne({ _id: req.params.thoughtId })
       .select("-__v")
       .populate("reactions")
       .then(async (thought) => {
-        !user
+        !thought
           ? res.status(404).json({ message: "No thought with that ID" })
           : res.json({ thought });
       })
@@ -51,7 +51,7 @@ module.exports = {
   },
   //!       Delete a thought
   deleteThought(req, res) {
-    Thought.findOneAndDelete({ _id: required.params.thoughtId })
+    Thought.findOneAndDelete({ _id: req.params.thoughtId }) // fix here
       .then((thought) =>
         !thought
           ? res
@@ -83,7 +83,7 @@ module.exports = {
   // Create a reaction
 
   createReaction(req, res) {
-    Reaction.create(req.body) // add userId to the thought object
+    Reaction.create(req.body) 
       .then((reaction) => {
         Thought.findOneAndUpdate(
           { _id: req.params.thoughtId },
@@ -113,7 +113,7 @@ module.exports = {
   removeReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $pull: { reactions: req.params.reactionId } } // fix here
+      { $pull: { reactions: req.params.reactionId } } 
     )
       .then((reaction) =>
         !reaction
@@ -121,6 +121,20 @@ module.exports = {
               .status(404)
               .json({ message: "No reaction found with that ID :(" })
           : res.json(reaction)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
+  // TODO Update Reaction
+  updateReaction(req, res) {
+    Reaction.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    )
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: "No user found with that ID 😱" })
+          : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
   },
