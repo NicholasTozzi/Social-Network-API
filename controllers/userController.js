@@ -12,7 +12,7 @@ module.exports = {
   //!       get all users, and utilize aggregate function friendCount
   getUsers(req, res) {
     User.find()
-      .populate('thoughts')
+      .populate("thoughts")
       .then(async (users) => {
         const userObj = {
           users,
@@ -68,9 +68,9 @@ module.exports = {
       .then((user) =>
         !user
           ? res.status(404).json({ message: "No such user exists" })
-          : Thought.findOneAndUpdate(
+          : Thought.deleteMany(
               { users: req.params.userId },
-              { $pull: { users: req.params.userId } },
+              { $pull: { thoughts: req.params.thoughtId } },
               { new: true }
             )
       )

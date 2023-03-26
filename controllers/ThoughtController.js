@@ -124,7 +124,7 @@ module.exports = {
       )
       .catch((err) => res.status(500).json(err));
   },
-  // TODO Update Reaction
+  //Update Reaction
   updateReaction(req, res) {
     Reaction.findOneAndUpdate(
       { _id: req.params.reactionId },
