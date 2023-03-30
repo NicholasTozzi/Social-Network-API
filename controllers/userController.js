@@ -63,28 +63,18 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   //!       Delete user with a required parameter of the userId
-  deleteUser(req, res) {
-    User.findOneAndRemove({ _id: req.params.userId })
-      .then((user) =>
-        !user
-          ? res.status(404).json({ message: "No such user exists" })
-          : Thought.deleteMany(
-              { users: req.params.userId },
-              { $pull: { thoughts: req.params.thoughtId } },
-              { new: true }
-            )
-      )
-      .then((Thought) =>
-        !Thought
-          ? res.status(404).json({
-              message: "user deleted, but no Thoughts found",
-            })
-          : res.json({ message: "user successfully deleted" })
-      )
-      .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
-      });
+  async deleteUser(req, res) {
+    let user = await User.findOne({ _id: req.params.userId });
+    for (var i = 0; i < user.thoughts.length; i++) {
+      await Thought.findOneAndDelete({ _id: user.thoughts[i]._id });
+    }
+    user = await User.findOneAndDelete({ _id: req.params.userId });
+
+    !user
+      ? res.status(404).json({
+          message: "user deleted, but no Thoughts found",
+        })
+      : res.json({ message: "user successfully deleted" });
   },
 
   //!       Add an friend to a user
